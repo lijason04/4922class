@@ -1,8 +1,3 @@
-
-from cmath import cos
-from typing import Counter
-
-
 def calculate(cost, perDown, sal, perSal, r, sar):
     currentSavings = 0
     months = 0
@@ -30,28 +25,30 @@ def partB(poritonDown, r):
 
 
 #print(partB(.25, .04))
-
-def partC():
+def partC1():
     initalSal = float(input("Enter the starting salary: "))
     sar = 0.07
     r = 0.04
     down = 0.25
     cost = 1000000
-    a = 0
-    b = 10000
+    partC2(cost, down, initalSal, r, sar)
+
+def partC2(cost, down, sal, r, sar):
+    lower = 0
+    upper = 10000
     extCount = 0
-    while(a < b):
+    while(lower < upper):
         extCount+= 1
-        c = int(a+b) // int(2)
-        months =  calculate(cost, down, initalSal, c/10000, r, sar)
+        c = int(lower + upper) // int(2)
+        months =  calculate(cost, down, sal, c/10000, r, sar)
         if months > 36:
-         a = c
+         lower = c
         elif months < 36:
-         b = c
+         upper = c
         if months == 36:
          print("BSR: " + str(c/10000))
          print("Steps: " + str(extCount))
          return True
     print("Impossible")
     return False
-partC()
+partC1()
