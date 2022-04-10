@@ -17,15 +17,9 @@ WORDLIST_FILENAME = "words.txt"
 
 
 def load_words():
-    print("Loading word list from file...")
-    # inFile: file
-    inFile = open(WORDLIST_FILENAME, 'r')
-    # line: string
-    line = inFile.readline()
-    # wordlist: list of strings
-    wordlist = line.split()
-    print("  ", len(wordlist), "words loaded.")
-    return wordlist
+    with open(WORDLIST_FILENAME, 'r') as inFile:
+      return inFile.readline().split()
+
 def choose_word(wordlist):
     return random.choice(wordlist)
 
@@ -37,38 +31,32 @@ def choose_word(wordlist):
 # so that it can be accessed from anywhere in the program
 wordlist = load_words()
 
-
 def is_word_guessed(secret_word, letters_guessed):
-  secret_word = str.lower(secret_word)
-  counter = 0
-  for i in range(len(secret_word)):
-    if secret_word[i] in letters_guessed:
-      counter+=1
-  if counter == len(secret_word):
-    return True
-  return False
-
-
+  letters_guessed = set(letters_guessed)
+  for c in secret_word:
+    if c not in letters_guessed:
+        return False
+  return True
 
 def get_guessed_word(secret_word, letters_guessed):
     toReturn = ''
-    secret_word = str.lower(secret_word)
-    for i in range(len(secret_word)):
-        if secret_word[i] in letters_guessed:
-            toReturn += secret_word[i] 
+    letters_guessed = set(letters_guessed)
+    for c in secret_word:
+        if c in letters_guessed:
+            toReturn += c
         else:
           toReturn += '_ '
-
     return toReturn
 
 
 
 def get_available_letters(letters_guessed):
-    letters = "abcdefghiklmnopqrstuvwxyz"
+    letters_guessed = set(letters_guessed)
+    letters = 'abcdefghijklmnopqrstuvwxyz'
     let2 = ''
-    for i in range(len(letters)):
-      if str.lower(letters[i]) not in letters_guessed:
-        let2 += letters[i]
+    for c in letters:
+      if str.lower(c) not in letters_guessed:
+        let2 += c
     return let2
 
 def actualHangman(secret_word, hasHint):
@@ -124,17 +112,17 @@ def match_with_gaps(my_word, other_word):
     my_word = my_word.replace(' ', '')
     if len(other_word) != len(my_word):
       return False
-    for i in range(len(my_word)):
-      if my_word[i] != '_' and my_word[i] != other_word[i]:
+    for mc, oc in zip(my_word, other_word):
+      if mc != '_' and mc != oc:
         return False
     return True 
 
 
 def show_possible_matches(my_word):
   returnList = []
-  for i in range(len(wordlist)):
-    if match_with_gaps(my_word, wordlist[i]) == True:
-      returnList.append(wordlist[i])
+  for c in wordlist:
+    if match_with_gaps(my_word, c) == True:
+      returnList.append(c)
   return returnList
 
 
@@ -156,8 +144,8 @@ if __name__ == "__main__":
     # To test part 2, comment out the pass line above and
     # uncomment the following two lines.
     
- ##   secret_word = choose_word(wordlist)
- ##   hangman(secret_word)
+    secret_word = choose_word(wordlist)
+    hangman(secret_word)
 
 ###############
     
