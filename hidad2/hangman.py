@@ -61,7 +61,7 @@ def actualHangman(secret_word, hasHint):
 
   while (guessCount > 0):
     usable, old = get_available_letters(lettersGuessed), get_guessed_word(secret_word, lettersGuessed)
-    print("The word has " + str(len(secret_word)) + " letters"  '\n' + "Available letters: " + usable)
+    print(f"The word has {len(secret_word)} letters \nAvailable letters: {usable}")
     keyInput = input("Please input a letter ")
 
     if(len(keyInput) > 1) or (keyInput not in usable):
@@ -69,7 +69,7 @@ def actualHangman(secret_word, hasHint):
         print(show_possible_matches(old))
       elif (warnCount > 0):
         warnCount -= 1
-        print("invalid or repeated input, " + str(warnCount) + "warns remain. " + old)
+        print(f"invalid or repeated input {warnCount}. warns remain: {old}")
       else: 
         guessCount -= 1
       continue
@@ -79,13 +79,13 @@ def actualHangman(secret_word, hasHint):
 
     if (new == old):
       guessCount -= 2 if keyInput in vowels else 1
-      print(keyInput + " is not in the word" + old + ". " + str(guessCount) + " guesses remaning")
+      print(f"{keyInput} is not in the word {old}. {str(guessCount)} guesses remaning")
       continue
     if is_word_guessed(secret_word, lettersGuessed) == True:
-      print("The word is: " + new + '\n' +"Score is " + str(guessCount))
+      print(f"The word is: {new} \nScore is {guessCount}")
       return
-    print(keyInput + " is in the word: " + new)
-  print("The word was: " + secret_word)
+    print(f"{keyInput} is in the word: {new}")
+  print(f"The word was: {secret_word}")
 
 def hangman(secret_word):
   actualHangman(secret_word, False)
