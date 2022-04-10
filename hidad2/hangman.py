@@ -42,10 +42,7 @@ def get_guessed_word(secret_word, letters_guessed):
     toReturn = ''
     letters_guessed = set(letters_guessed)
     for c in secret_word:
-        if c in letters_guessed:
-            toReturn += c
-        else:
-          toReturn += '_ '
+      toReturn += c if c in letters_guessed else '_ '
     return toReturn
 
 
@@ -55,48 +52,37 @@ def get_available_letters(letters_guessed):
     letters = 'abcdefghijklmnopqrstuvwxyz'
     let2 = ''
     for c in letters:
-      if str.lower(c) not in letters_guessed:
+      if c not in letters_guessed:
         let2 += c
     return let2
 
 def actualHangman(secret_word, hasHint):
-  lettersGuessed = []
-  vowels = "aeiou"
-  guessCount = 6
-  warnCount = 3
+  lettersGuessed, vowels, guessCount, warnCount = [], set(['a', 'e', 'i', 'o', 'u']), 6, 3
+
   while (guessCount > 0):
-    usable = get_available_letters(lettersGuessed)
-    old = get_guessed_word(secret_word, lettersGuessed)
-    print("The word has " + str(len(secret_word)) + " letters")
-    print("Available letters: " + usable)
+    usable, old = get_available_letters(lettersGuessed), get_guessed_word(secret_word, lettersGuessed)
+    print("The word has " + str(len(secret_word)) + " letters"  '\n' + "Available letters: " + usable)
     keyInput = input("Please input a letter ")
+
     if(len(keyInput) > 1) or (keyInput not in usable):
       if (keyInput == '*' and hasHint == True):
         print(show_possible_matches(old))
-        continue
-      if (warnCount > 0):
+      elif (warnCount > 0):
         warnCount -= 1
         print("invalid or repeated input, " + str(warnCount) + "warns remain. " + old)
-        continue
       else: 
         guessCount -= 1
-        continue
+      continue
 
     lettersGuessed.append(keyInput)
     new = get_guessed_word(secret_word, lettersGuessed)
+
     if (new == old):
-      if keyInput in vowels:
-        guessCount -= 2
-        print("vowel" + keyInput + " is not in the word" + old + ". " + str(guessCount) + " guesses remaning")
-      
-        continue
-      else:
-        guessCount -= 1
-        print(keyInput + " is not in the word" + old + ". " + str(guessCount) + " guesses remaning")
-        continue
+      guessCount -= 2 if keyInput in vowels else 1
+      print(keyInput + " is not in the word" + old + ". " + str(guessCount) + " guesses remaning")
+      continue
     if is_word_guessed(secret_word, lettersGuessed) == True:
-      print("The word is: " + new)
-      print("Score is " + str(guessCount))
+      print("The word is: " + new + '\n' +"Score is " + str(guessCount))
       return
     print(keyInput + " is in the word: " + new)
   print("The word was: " + secret_word)
