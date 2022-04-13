@@ -47,10 +47,14 @@ def get_frequency_dict(sequence):
 #
 def get_word_score(word, n):
     word = str.lower(word)
-    summation = 7 * len(word) - 3 * (n-len(word)) if 7 * len(word) - 3 * (n-len(word)) > 1 else 1
+    summation, multiplyer = 0, 7 * len(word) - 3 * (n-len(word))
     for c in word:
         summation += SCRABBLE_LETTER_VALUES[c]
+    if multiplyer > 1:
+        return summation * multiplyer
     return summation
+    
+
     
 
 #
