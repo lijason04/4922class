@@ -25,10 +25,10 @@ SCRABBLE_LETTER_VALUES = {
 WORDLIST_FILENAME = "words.txt"
 
 def load_words():
-    wordlist = []
+    wordlist = {}
     with open(WORDLIST_FILENAME, 'r') as inFile:
         for line in inFile:
-            wordlist.append(line.strip().lower())
+            wordlist.add(line.strip().lower())
     return wordlist
 
 def get_frequency_dict(sequence):
@@ -53,9 +53,6 @@ def get_word_score(word, n):
     if multiplyer > 1:
         return summation * multiplyer
     return summation
-    
-
-    
 
 #
 # Make sure you understand how this function works and what it does!
@@ -90,17 +87,17 @@ def deal_hand(n):
 # Problem #2: Update a hand by removing letters
 #
 def update_hand(hand, word):
-    repHand = dict.copy(hand)
+    repHand = hand.copy(hand)
     for c in word:
-        if (dict.get(repHand, c) == None or dict.get(repHand, c) == None) and c in VOWELS and dict.get(repHand, "*") != None and dict.get(repHand, "*") > 0:
-            if dict.get(repHand, "*") == 1:
-                dict.pop(repHand, "*")
-            else:
-                repHand['*'] = repHand['*'] -1
-        elif dict.get(repHand, c) <= 1:
-            dict.pop(repHand, c)
-        elif dict.get(repHand, c) == None:
-            continue
+        quantity = repHand.get(c, 0)
+        if quantity == 0:
+             if c in VOWELS and dict.get(repHand, "*") != None and dict.get(repHand, "*") > 0:
+                if repHand.get("*") == 1:
+                    repHand.pop("*")
+                else:
+                    repHand['*'] = repHand['*'] -1
+        elif quantity == 1:
+            repHand.pop(c)
         else:
             repHand[c] = repHand[c] - 1
     return repHand
@@ -108,21 +105,15 @@ def update_hand(hand, word):
 # Problem #3: Test word validity
 #
 def is_valid_word(word, hand, word_list):
-    word_list = set(word_list)
-    repliHand = dict.copy(hand)
+    repliHand = hand.copy()
     word = str.lower(word)
-    vowels = "aeiou"
     
-    for i in range(len(word)):
-        c = word[i]
-        if dict.get(repliHand, c) == None or dict.get(repliHand, c) < 1:
-            print(1)
-            if dict.get(repliHand, '*') > 0 and c in vowels:
-                print(2)
+    for c in word:
+        if repliHand.get(c, 0) == 0:
+            if repliHand.get('*', 0) > 0 and c in VOWELS:
                 repliHand['*'] -= 1
                 continue
             else:
-                print(3)
                 return False
         repliHand[c] -= 1
     if word in word_list:
@@ -139,35 +130,6 @@ def calculate_handlen(hand):
 
 
 def play_hand(hand, word_list):
-
-    """
-    Allows the user to play the given hand, as follows:
-
-    * The hand is displayed.
-    
-    * The user may input a word.
-
-    * When any word is entered (valid or invalid), it uses up letters
-      from the hand.
-
-    * An invalid word is rejected, and a message is displayed asking
-      the user to choose another word.
-
-    * After every valid word: the score for that word is displayed,
-      the remaining letters in the hand are displayed, and the user
-      is asked to input another word.
-
-    * The sum of the word scores is displayed when the hand finishes.
-
-    * The hand finishes when there are no more unused letters.
-      The user can also finish playing the hand by inputing two 
-      exclamation points (the string '!!') instead of a word.
-
-      hand: dictionary (string -> int)
-      word_list: list of lowercase strings
-      returns: the total score for the hand
-      
-    """   
     score = 0
     while calculate_handlen(hand) > 0:   
         display_hand(hand) 
@@ -196,28 +158,7 @@ def play_hand(hand, word_list):
 #
 
 def substitute_hand(hand, letter):
-    """ 
-    Allow the user to replace all copies of one letter in the hand (chosen by user)
-    with a new letter chosen from the VOWELS and CONSONANTS at random. The new letter
-    should be different from user's choice, and should not be any of the letters
-    already in the hand.
-
-    If user provide a letter not in the hand, the hand should be the same.
-
-    Has no side effects: does not mutate hand.
-
-    For example:
-        substitute_hand({'h':1, 'e':1, 'l':2, 'o':1}, 'l')
-    might return:
-        {'h':1, 'e':1, 'o':1, 'x':2} -> if the new letter is 'x'
-    The new letter should not be 'h', 'e', 'l', or 'o' since those letters were
-    already in the hand.
-    
-    hand: dictionary (string -> int)
-    letter: string
-    returns: dictionary (string -> int)
-    """
-    replacedHand = dict.copy(hand)
+    replacedHand = hand.copy()
     if len(hand) > 25:
         return hand
     abcd = "abcdefghijklmnopqrstuvwxyz"
@@ -227,8 +168,8 @@ def substitute_hand(hand, letter):
         excludedChars.add(c)
     while newChar in excludedChars:
         newChar = abcd[random.randint(0, 25)]
-    replacedHand[newChar] = dict.get(hand, letter)
-    dict.pop(replacedHand, letter)
+    replacedHand[newChar] = hand.get(letter)
+    replacedHand.pop(letter)
     return replacedHand
 
 def play_game(word_list):
